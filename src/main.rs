@@ -62,7 +62,7 @@ fn main() {
             input_dir = fs::read_dir(AppDirs::new(Some(r"Opera Software\Opera GX Stable\Extensions\adbacgifemdbhdkfppmeilbgppmhaobf"), false).unwrap().config_dir).expect("Unable to grab Opera GX extension.").next().unwrap().unwrap().path().to_str().unwrap().to_string();
         } else if input_dir == "2" { // Google Chrome
             input_dir.clear();
-            input_dir = fs::read_dir(AppDirs::new(Some(r"Google\Chrome\User Data\Default\Extensions\adbacgifemdbhdkfppmeilbgppmhaobf"), false).unwrap().cache_dir).expect("Unable to grab Opera GX extension.").next().unwrap().unwrap().path().to_str().unwrap().to_string();
+            input_dir = fs::read_dir(AppDirs::new(Some(r"Google\Chrome\User Data\Default\Extensions\adbacgifemdbhdkfppmeilbgppmhaobf"), false).unwrap().cache_dir).expect("Unable to grab Google Chrome extension.").next().unwrap().unwrap().path().to_str().unwrap().to_string();
         }
     }
 
