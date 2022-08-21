@@ -1,5 +1,5 @@
 // Dependencies
-use std::{fs, io::{stdin, stdout, Write, Read}};
+use std::{fs, io::{stdin, stdout, Write, Read}, path::PathBuf};
 use platform_dirs::AppDirs;
 
 // Pauses the application until userinput
@@ -16,9 +16,9 @@ fn pause() {
 }
 
 // Path to the installation root dir
-fn patch(path: String) {
+fn patch(path: PathBuf) {
     // Patching the background file
-    let background = path.clone() + "/background.js";
+    let background = path.join("background.js");
 
     // Grabbing background file contents
     let mut background_contents = fs::read_to_string(background.clone()).expect("Unable to open file (background.js)");
@@ -35,7 +35,7 @@ fn patch(path: String) {
     fs::write(background.clone(), background_contents).expect("Unable to write file contents (background.js)");
 
     // Patching the options file
-    let options = path.clone() + "/js/page/options.js";
+    let options = path.join("js/page/options.js");
 
     // Grabbing options file contents
     let mut options_contents = fs::read_to_string(options.clone()).expect("Unable to open file (options.js)");
@@ -55,32 +55,31 @@ fn main() {
     stdout().flush().unwrap();
     stdin().read_line(&mut input_dir).ok().expect("Failed to get user input");
 
-    // Resolve what we want to do
-    input_dir = input_dir.trim().to_string();
-    if !(input_dir == "1" || input_dir == "2" || input_dir == "3") {
-        panic!("Invalid option");
-    }
-
-    // Custom Path
-    if input_dir == "3" {
-        input_dir.clear();
-        print!("Please enter the path: ");
-        stdout().flush().unwrap();
-        stdin().read_line(&mut input_dir).ok().expect("Failed to get user input");
-        input_dir = input_dir.trim().to_string();
-    } else {
+    // All of the options
+    let path: PathBuf;
+    match input_dir.trim() {
         // Opera GX
-        if input_dir == "1" {
-            input_dir.clear();
-            input_dir = fs::read_dir(AppDirs::new(Some(r"Opera Software\Opera GX Stable\Extensions\adbacgifemdbhdkfppmeilbgppmhaobf"), false).unwrap().config_dir).expect("Unable to grab Opera GX extension.").next().unwrap().unwrap().path().to_str().unwrap().to_string();
-        } else if input_dir == "2" { // Google Chrome
-            input_dir.clear();
-            input_dir = fs::read_dir(AppDirs::new(Some(r"Google\Chrome\User Data\Default\Extensions\adbacgifemdbhdkfppmeilbgppmhaobf"), false).unwrap().cache_dir).expect("Unable to grab Google Chrome extension.").next().unwrap().unwrap().path().to_str().unwrap().to_string();
+        "1" => {
+            path = fs::read_dir(AppDirs::new(Some(r"Opera Software\Opera GX Stable\Extensions\adbacgifemdbhdkfppmeilbgppmhaobf"), false).unwrap().config_dir).expect("Unable to grab Opera GX extension.").next().unwrap().unwrap().path();
         }
+        // Google Chrome
+        "2" => { 
+            path = fs::read_dir(AppDirs::new(Some(r"Google\Chrome\User Data\Default\Extensions\adbacgifemdbhdkfppmeilbgppmhaobf"), false).unwrap().cache_dir).expect("Unable to grab Google Chrome extension.").next().unwrap().unwrap().path();
+        }
+        // Custom Path
+        "3" => {
+            input_dir.clear();
+            print!("Please enter the path: ");
+            stdout().flush().unwrap();
+            stdin().read_line(&mut input_dir).ok().expect("Failed to get user input");
+            path = PathBuf::from(input_dir.trim().to_string());
+        }
+        // Neither of above
+        _ => panic!("Invalid option")
     }
 
-    //
-    patch(input_dir.to_string());
+    // Patching
+    patch(path);
     println!("Patched!");
     pause();
 }
