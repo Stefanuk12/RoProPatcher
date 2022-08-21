@@ -1,6 +1,19 @@
 // Dependencies
-use std::{fs, io::{stdin, stdout, Write}};
+use std::{fs, io::{stdin, stdout, Write, Read}};
 use platform_dirs::AppDirs;
+
+// Pauses the application until userinput
+fn pause() {
+    let mut stdin = stdin();
+    let mut stdout = stdout();
+
+    // We want the cursor to stay at the end of the line, so we print without a newline and flush manually.
+    write!(stdout, "Press any key to continue...").unwrap();
+    stdout.flush().unwrap();
+
+    // Read a single byte and discard
+    let _ = stdin.read(&mut [0u8]).unwrap();
+}
 
 // Path to the installation root dir
 fn patch(path: String) {
@@ -68,6 +81,6 @@ fn main() {
 
     //
     patch(input_dir.to_string());
-    println!("Patched! Press enter to exit.");
-    stdin();
+    println!("Patched!");
+    pause();
 }
