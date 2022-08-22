@@ -26,10 +26,10 @@ fn patch(path: PathBuf) {
     // Finding the things to patch
     background_contents = background_contents.replace("subscription = await getStorage(\"rpSubscription\")", "subscription = \"pro_tier\"");
     background_contents = background_contents.replace("subscription = data", "data = \"pro_tier\"; subscription = data");
-    background_contents = background_contents.replace("getStorage('rpSubscription')", "\"pro_tier\"");
+    background_contents = background_contents.replace("getStorage('rpSubscription')", "new Promise(resolve => resolve(\"pro_tier\"))");
     background_contents = background_contents.replace("await getStorage(\"rpSubscription\")", "\"pro_tier\"");
-    background_contents = background_contents.replace("setStorage(\"rpSubscription\", xhr.getResponseHeader(\"ropro-subscription-tier\"))", "setStorage(\"rpSubscription\", \"pro_tier\"");
-    background_contents = background_contents.replace("setStorage(\"rpSubscription\", subscriptionLevel", "setStorage(\"rpSubscription\", \"pro_tier\"");
+    background_contents = background_contents.replace("setStorage(\"rpSubscription\", xhr.getResponseHeader(\"ropro-subscription-tier\"))", "setStorage(\"rpSubscription\", \"pro_tier\")");
+    background_contents = background_contents.replace("setStorage(\"rpSubscription\", subscriptionLevel)", "setStorage(\"rpSubscription\", \"pro_tier\")");
 
     // Write our changes
     fs::write(background.clone(), background_contents).expect("Unable to write file contents (background.js)");
