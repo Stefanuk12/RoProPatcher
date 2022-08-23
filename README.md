@@ -27,3 +27,5 @@ This currently does not support Firefox but it easily can be done manually.
 - For example, go to opera://extensions (or wherever you can view your extensions)
 - Press "Load unpacked" (or similar) and select the patched extension folder
 - Done!
+
+You can view a fully manual YouTube tutorial [here](https://youtu.be/GHPSL0IMeww)
