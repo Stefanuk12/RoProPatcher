@@ -17,7 +17,7 @@ This currently does not support Firefox but it easily can be done manually.
 - Make sure to override the old extension.
 
 ## Manual download
-*this should be around Chrome/Brave's "corrupted" message*
+*this should get around Chrome/Brave's "corrupted" message*
 - Download [Chrome extension source viewer](https://chrome.google.com/webstore/detail/chrome-extension-source-v/jifpbeccnghkjeaalbbjmodiffmgedin) in the Chrome Store
 - Go to [RoPro](https://chrome.google.com/webstore/detail/ropro-enhance-your-roblox/adbacgifemdbhdkfppmeilbgppmhaobf?hl=en-GB)
 - Open the extension we downloaded, and press "Download as zip"
