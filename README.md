@@ -7,7 +7,7 @@ Chrome, Brave (and possibly other browsers) have a feature that checks the hash 
 - an exception to this rule is Opera GX
 
 ## Firefox
-This currently does not support Firefox but it easily can be done manually. 
+This currently does not support Firefox but it easily can be done manually. To disable hash check, download the nightly build and then it will be an optional flag.
 
 - Go to where your extension is installed, usually at `%appdata%\Mozilla\Firefox\Profiles` followed by your profile name (the most recently modified folder) and finally into `extensions`. 
 - From there, find the RoPro file - for me it is named `{fbfda72b-073a-4a24-9e87-6d472b69b66f}.xpi`. 
