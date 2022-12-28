@@ -15,3 +15,12 @@ This currently does not support Firefox but it easily can be done manually.
 Chrome (and possibly other browsers) have a feature that checks the hash of the extension. This means that it will flag as corrupted. Therefore, you will have to download the extension, patch it with a custom path and use developer mode to load an unpacked extension.
 
 - an exception to this rule is Opera GX
+
+# Getting RoPro Verification Token
+You may use the patcher to get this token, however, you might find it easier to do it another way:
+- Go to your extensions in your browser, e.g. `chrome://extensions`
+- You should see something like `Inspect views  background page` under RoPro
+- Press on the underlined __background page__
+- The developer console for the extensions should open, go to the console tab
+- Execute this `await getStorage("userVerification")`
+- The format will be `{USERID: 'TOKEN'}`
