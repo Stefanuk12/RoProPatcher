@@ -31,6 +31,7 @@ async function reqHandler(req: Request) {
 
     // Set the headers, only if they are not "blank". Assume if one is blank, the rest are.
     const headers = new Headers(req.headers)
+    headers.set("access-control-allow-origin", "*") // CORS
     if (Data.PHPSESSID != "") {
         headers.set("Cookie", `PHPSESSID=${Data.PHPSESSID}`)
         headers.set("ropro-id", Data["ropro-id"])
