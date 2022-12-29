@@ -27,6 +27,7 @@ async function reqHandler(req: Request) {
     if (req.method.toUpperCase() == "OPTIONS") {
         const headers = new Headers()
         headers.set("access-control-allow-origin", "*")
+        headers.set("access-control-allow-headers", "*")
         console.debug(`Sent OPTIONS: ${RoProURL}`)
         return new Response(null, {
             headers: headers
