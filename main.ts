@@ -63,7 +63,7 @@ async function reqHandler(req: Request) {
     const responseHeaders = new Headers(response.headers)
     responseHeaders.set("access-control-allow-origin", "*")
     responseHeaders.set("access-control-allow-headers", "*")
-    responseHeaders.set("access-control-allow-credentials", "*")
+    responseHeaders.set("access-control-allow-credentials", "true")
 
     // Return
     return new Response(response.body, {
