@@ -27,6 +27,7 @@ async function reqHandler(req: Request) {
     const CORSheaders = new Headers()
     CORSheaders.set("access-control-allow-origin", "*")
     CORSheaders.set("access-control-allow-headers", "*")
+    CORSheaders.set("access-control-allow-credentials", "*")
     if (req.method.toUpperCase() == "OPTIONS") {
         console.debug(`Sent OPTIONS: ${RoProURL}`)
         return new Response(null, {
@@ -51,7 +52,6 @@ async function reqHandler(req: Request) {
     }
 
     // Perform the request
-    console.debug(headers)
     const response = await fetch(RoProURL, {
         method: req.method,
         headers: headers,
@@ -63,6 +63,7 @@ async function reqHandler(req: Request) {
     const responseHeaders = new Headers(response.headers)
     responseHeaders.set("access-control-allow-origin", "*")
     responseHeaders.set("access-control-allow-headers", "*")
+    responseHeaders.set("access-control-allow-credentials", "*")
 
     // Return
     return new Response(response.body, {
@@ -80,6 +81,7 @@ serve(reqHandler, {port: 443});
     while (true) {
         // Grab the data, and set.
         Data = await (await fetch(DataFetchURL)).json()
+        console.debug("Refreshed data", Data)
 
         // Wait some time
         await sleep(300)
