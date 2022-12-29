@@ -44,15 +44,14 @@ async function reqHandler(req: Request) {
 
     // Set the headers, only if they are not "blank". Assume if one is blank, the rest are.
     const headers = new Headers(req.headers)
-    console.debug(Data.PHPSESSID != "", Data)
     if (Data.PHPSESSID != "") {
-        console.debug("Set Cookie, etc.")
         headers.set("Cookie", `PHPSESSID=${Data.PHPSESSID}`)
         headers.set("ropro-id", Data["ropro-id"])
         headers.set("ropro-verification", Data["ropro-verification"])
     }
 
     // Perform the request
+    console.debug(headers)
     const response = await fetch(RoProURL, {
         method: req.method,
         headers: headers,
