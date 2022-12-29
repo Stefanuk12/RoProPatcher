@@ -23,6 +23,7 @@ async function reqHandler(req: Request) {
         RoProURL.host = "ropro.io"
 
     // CORS
+    console.debug(`Incoming (${req.method.toUpperCase()}): ${RoProURL}`)
     if (req.method.toUpperCase() == "OPTIONS") {
         const headers = new Headers()
         headers.set("access-control-allow-origin", "*")
