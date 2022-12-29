@@ -24,20 +24,21 @@ async function reqHandler(req: Request) {
 
     // CORS
     console.debug(`Incoming (${req.method.toUpperCase()}): ${RoProURL}`)
+    const CORSheaders = new Headers()
+    CORSheaders.set("access-control-allow-origin", "*")
+    CORSheaders.set("access-control-allow-headers", "*")
     if (req.method.toUpperCase() == "OPTIONS") {
-        const headers = new Headers()
-        headers.set("access-control-allow-origin", "*")
-        headers.set("access-control-allow-headers", "*")
         console.debug(`Sent OPTIONS: ${RoProURL}`)
         return new Response(null, {
-            headers: headers
+            headers: CORSheaders
         })
     }
 
     // Check if the is the getSubscription one
     if (RoProURL.pathname == "/getSubscription.php") {
         return new Response(Data.tier, {
-            status: 200
+            status: 200,
+            headers: CORSheaders
         })
     }
 
