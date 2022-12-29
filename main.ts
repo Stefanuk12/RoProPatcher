@@ -15,7 +15,12 @@ let Data = {
 async function reqHandler(req: Request) {
     // Replace host, checking the subdomain
     const RoProURL = new URL(req.url)
-    RoProURL.host = RoProURL.pathname.endsWith("!api") ? "api.ropro.io" : "ropro.io"
+    const FoundAPI = RoProURL.pathname.indexOf("!api")
+    if (FoundAPI != -1) {
+        RoProURL.host = "api.ropro.io"
+        RoProURL.pathname = RoProURL.pathname.substring(0, FoundAPI)
+    } else
+        RoProURL.host = "ropro.io"
 
     // Check if the is the getSubscription one
     if (RoProURL.pathname == "/getSubscription.php") {
