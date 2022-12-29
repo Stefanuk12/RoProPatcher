@@ -42,6 +42,7 @@ fn patch(path: PathBuf, _proxy: Option<String>) {
     // Patching the background file
     let background = path.join("background.js");
     let mut background_contents = fs::read_to_string(&background).expect("Unable to open file (background.js)");
+    background_contents.insert_str(0, "$.ajaxSetup({xhrFields: { withCredentials: true}})");
     background_contents = re.replace_all(&background_contents, &rep).to_string();
     fs::write(&background, background_contents).expect("Unable to write file contents (background.js)");
 
