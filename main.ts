@@ -57,6 +57,10 @@ async function reqHandler(req: Request) {
     })
     console.debug(`Performed request: ${RoProURL}`)
 
+    // Add CORS to headers
+    headers.set("access-control-allow-origin", "*")
+    headers.set("access-control-allow-headers", "*")
+
     // Return
     return response
 }
