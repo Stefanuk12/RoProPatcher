@@ -6,8 +6,6 @@ import { sleep } from "https://deno.land/x/sleep@v1.2.1/mod.ts";
 const DataFetchURL = "https://raw.githubusercontent.com/Stefanuk12/RoProPatcher/proxy/data.json"
 let Data = {
     "PHPSESSID": "",
-    "ropro-id": "",
-    "ropro-verification": "",
     "tier": "pro_tier"
 }
 
@@ -23,7 +21,7 @@ async function reqHandler(req: Request) {
         RoProURL.host = "ropro.io"
 
     // Figure out stuff for cors
-    console.debug(`Incoming (${req.method.toUpperCase()}): ${RoProURL}`)
+    console.info(`Incoming (${req.method.toUpperCase()}): ${RoProURL}`)
     const CORSheaders = new Headers()
     const origin = req.headers.get("origin") || "chrome-extension://adbacgifemdbhdkfppmeilbgppmhaobf"
 
@@ -38,7 +36,7 @@ async function reqHandler(req: Request) {
     CORSheaders.set("access-control-allow-headers", AllowedHeaders)
     CORSheaders.set("access-control-allow-credentials", "true")
     if (req.method.toUpperCase() == "OPTIONS") {
-        console.debug(`Sent OPTIONS: ${RoProURL}`)
+        console.info(`Sent OPTIONS: ${RoProURL}`)
         return new Response(null, {
             headers: CORSheaders
         })
@@ -56,17 +54,16 @@ async function reqHandler(req: Request) {
     const headers = new Headers(req.headers)
     if (Data.PHPSESSID != "") {
         headers.set("Cookie", `PHPSESSID=${Data.PHPSESSID}`)
-        headers.set("ropro-id", Data["ropro-id"])
-        headers.set("ropro-verification", Data["ropro-verification"])
     }
 
     // Perform the request
+    console.debug(headers)
     const response = await fetch(RoProURL, {
         method: req.method,
         headers: headers,
         body: req.body
     })
-    console.debug(`Performed request: ${RoProURL}`)
+    console.info(`Performed request: ${RoProURL}`)
 
     // Add CORS to headers
     const responseHeaders = new Headers(response.headers)
@@ -90,7 +87,7 @@ serve(reqHandler, {port: 443});
     while (true) {
         // Grab the data, and set.
         Data = await (await fetch(DataFetchURL)).json()
-        console.debug("Refreshed data", Data)
+        console.info("Refreshed data", Data)
 
         // Wait some time
         await sleep(300)
