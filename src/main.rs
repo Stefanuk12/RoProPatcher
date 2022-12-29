@@ -16,111 +16,42 @@ fn pause() {
 }
 
 // Path to the installation root dir
-fn patch(path: PathBuf) {
+fn patch(path: PathBuf, _proxy: Option<String>) {
+    // Ask for the proxy url
+    let mut proxy = _proxy.unwrap_or("N/A".to_owned());
+    if proxy == "N/A" {
+        // Ask for the proxy domain, default it to ours
+        proxy = String::new();
+        print!("Please enter the proxy domain (ropro-proxy.deno.dev): ");
+        stdout().flush().unwrap();
+        stdin().read_line(&mut proxy).ok().expect("Failed to get user input");
+
+        // Check if input was blank
+        if proxy.trim().len() == 0 {
+            proxy = "ropro-proxy.deno.dev".to_string();
+        }
+    }
+
+    // The regex replace thing. We don't want to proxy everything, only the stuff that needs verification
+    let re = regex::Regex::new(r#"(https://api\.)ropro\.io/(validateUser\.php|getServerInfo\.php|getServerConnectionScore\.php|getServerAge\.php|getSubscription\.php\?key=)"#).unwrap();
+    let rep = format!("${{1}}{}/${{2}}", proxy);
+
     // Patching the background file
     let background = path.join("background.js");
-
-    // Grabbing background file contents
     let mut background_contents = fs::read_to_string(background.clone()).expect("Unable to open file (background.js)");
-
-    // Finding the things to patch
-    background_contents = background_contents.replace("subscription = await getStorage(\"rpSubscription\")", "subscription = \"pro_tier\"");
-    background_contents = background_contents.replace("subscription = data", "data = \"pro_tier\"; subscription = data");
-    background_contents = background_contents.replace("getStorage('rpSubscription')", "new Promise(resolve => resolve(\"pro_tier\"))");
-    background_contents = background_contents.replace("await getStorage(\"rpSubscription\")", "\"pro_tier\"");
-    background_contents = background_contents.replace("setStorage(\"rpSubscription\", xhr.getResponseHeader(\"ropro-subscription-tier\"))", "setStorage(\"rpSubscription\", \"pro_tier\")");
-    background_contents = background_contents.replace("setStorage(\"rpSubscription\", subscriptionLevel)", "setStorage(\"rpSubscription\", \"pro_tier\")");
-
-    // Write our changes
+    background_contents = re.replace_all(&background_contents, &rep).to_string();
     fs::write(background.clone(), background_contents).expect("Unable to write file contents (background.js)");
 
-    // Patching the options file
-    let options = path.join("js/page/options.js");
-
-    // Grabbing options file contents
-    let mut options_contents = fs::read_to_string(options.clone()).expect("Unable to open file (options.js)");
-
-    // Finding things to patch
-    options_contents = options_contents.replace("setStorage('rpSubscription', data)", "data=\"pro_tier\"; setStorage('rpSubscription', data)");
-
-    // Write our changes
-    fs::write(options.clone(), options_contents).expect("Unable to write file contents (options.js)");
-}
-
-// Converts Roblox cookie to CSRF
-fn grab_csrf(cookie: String) -> String {
-    // Create the request
-    let client = reqwest::blocking::Client::new();
-    let response = client.post("https://catalog.roblox.com/v1/catalog/items/details")
-        .header("Cookie", format!(".ROBLOSECURITY={};", cookie))
-        .header("content-length", 0)
-        .send()
-        .unwrap();
-
-    // Return header
-    let csrf = response.headers()["x-csrf-token"].to_str().unwrap().to_owned();
-    return csrf;
-}
-
-// Grab verification metadata from RoPro
-#[derive(serde::Deserialize)]
-struct Verification {
-    universeId: i64
-}
-fn grab_verification_md() -> i64 {
-    // Create the request
-    let client = reqwest::blocking::Client::new();
-    let response: Verification = client.post("https://api.ropro.io/verificationMetadata.php")
-        .header("content-length", 0)
-        .send()
-        .unwrap()
-        .json()
-        .unwrap();
-
-    // Return
-    return response.universeId;
-}
-
-// (Un)favourite a Roblox universe
-fn favourite_universe(cookie: String, csrf: String, universe_id: i64, unfavourite: bool) {
-    // Create the request
-    let client = reqwest::blocking::Client::new();
-    let mut data = std::collections::HashMap::new();
-    data.insert("isFavorited", !unfavourite);
-    let response = client.post(format!("https://games.roblox.com/v1/games/{}/favorites", universe_id))
-        .header("Cookie", format!(".ROBLOSECURITY={};", cookie))
-        .header("x-csrf-token", csrf)
-        .json(&data)
-        .send();
-
-    // Check for error
-    if response.is_err() {
-        println!("Unable to (un)favourite universe for unknown reason")
-    }
-}
-
-// Get the verification token
-#[derive(serde::Deserialize)]
-struct VerificationResponse {
-    success: bool,
-    error_code: Option<i8>,
-    token: Option<String>
-}
-fn get_verification() -> String {
-    // Create the request
-    let client = reqwest::blocking::Client::new();
-    let response: VerificationResponse = client.post("https://api.ropro.io/generateVerificationToken.php")
-        .header("content-length", 0)
-        .send()
-        .unwrap()
-        .json()
-        .unwrap();
-
-    // Return
-    if response.success == false {
-        return response.error_code.unwrap().to_string();
-    } else {
-        return response.token.unwrap();
+    // Patching each file in js/page
+    let jspage = path.clone().join("js/page");
+    for dir_entry in fs::read_dir(jspage).unwrap() {
+        let file = dir_entry.unwrap();
+        let file_name = format!("js/page/{}", file.file_name().to_str().unwrap());
+        let file_path = file.path();
+    
+        let mut file_data = fs::read_to_string(file_path.clone()).expect(&format!("Unable to open file ({})", file_name));
+        file_data = re.replace_all(&file_data, &rep).to_string();
+        fs::write(file_path, file_data).expect(&format!("Unable to write file contents ({})", file_name));
     }
 }
 
@@ -128,47 +59,20 @@ fn get_verification() -> String {
 fn main() {
     // Grab the input directory
     let mut input_dir = String::new();
-    print!("Thanks for using Stefanuk12's RoPro Patcher.\n\nPlease select an option:\n\n0. Generate RoPro Verification Token\n1. Opera GX\n2. Custom Path\n> ");
+    print!("Thanks for using Stefanuk12's RoPro Patcher.\n\nPlease select an option:\n\n1. Opera GX\n2. Custom Path\n> ");
     stdout().flush().unwrap();
     stdin().read_line(&mut input_dir).ok().expect("Failed to get user input");
 
     // All of the options
     let path: PathBuf;
     match input_dir.trim() {
-        // Generate RoPro Verification Token
-        "0" => {
-            // Ask for their Roblox cookie
-            let mut cookie = String::new();
-            cookie.clear();
-            print!("Please enter your Roblox cookie (without the '.ROBLOSECURITY=' part)\n> ");
-            stdout().flush().unwrap();
-            stdin().read_line(&mut cookie).ok().expect("Failed to get user input");
-            cookie = cookie.trim().to_string();
-
-            // Resolve to CSRF
-            let csrf = grab_csrf(cookie.to_owned());
-            
-            // Favourite, grab token, unfavourite
-            let universe_id = grab_verification_md();
-            favourite_universe(cookie.to_owned(), csrf.to_owned(), universe_id, false);
-            let token = get_verification();
-            favourite_universe(cookie.to_owned(), csrf.to_owned(), universe_id, true);
-
-            // Check
-            if token.len() == 25 {
-                println!("Got your RoPro verification token: {}", token);
-            } else {
-                println!("There was an issue with getting your token (Error {})", token)
-            }
-
-            //
-            pause();
-        }
         // Opera GX
         "1" => {
+            // Grab path
             path = fs::read_dir(AppDirs::new(Some(r"Opera Software\Opera GX Stable\Extensions\adbacgifemdbhdkfppmeilbgppmhaobf"), false).unwrap().config_dir).expect("Unable to grab Opera GX extension.").next().unwrap().unwrap().path();
-            
-            patch(path);
+    
+            // Patch
+            patch(path, None);
             println!("Patched!");
             pause();
         }
@@ -180,7 +84,7 @@ fn main() {
             stdin().read_line(&mut input_dir).ok().expect("Failed to get user input");
             path = PathBuf::from(input_dir.trim().to_string());
 
-            patch(path);
+            patch(path, None);
             println!("Patched!");
             pause();
         }
