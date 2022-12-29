@@ -27,7 +27,7 @@ async function reqHandler(req: Request) {
     const CORSheaders = new Headers()
     CORSheaders.set("access-control-allow-origin", "*")
     CORSheaders.set("access-control-allow-headers", "*")
-    CORSheaders.set("access-control-allow-credentials", "*")
+    CORSheaders.set("access-control-allow-credentials", "true")
     if (req.method.toUpperCase() == "OPTIONS") {
         console.debug(`Sent OPTIONS: ${RoProURL}`)
         return new Response(null, {
