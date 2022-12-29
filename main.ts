@@ -58,11 +58,16 @@ async function reqHandler(req: Request) {
     console.debug(`Performed request: ${RoProURL}`)
 
     // Add CORS to headers
-    response.headers.set("access-control-allow-origin", "*")
-    response.headers.set("access-control-allow-headers", "*")
+    const responseHeaders = new Headers(response.headers)
+    responseHeaders.set("access-control-allow-origin", "*")
+    responseHeaders.set("access-control-allow-headers", "*")
 
     // Return
-    return response
+    return new Response(response.body, {
+        headers: responseHeaders,
+        status: response.status,
+        statusText: response.statusText
+    })
 }
 
 // Serve
