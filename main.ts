@@ -31,7 +31,7 @@ async function reqHandler(req: Request) {
     for (const header of req.headers.keys()) {
         AllowedHeaders += header + ", "
     }
-    AllowedHeaders.substring(0, AllowedHeaders.lastIndexOf(", "))
+    AllowedHeaders += "ropro-id, ropro-verification"
 
     // Set cors
     CORSheaders.set("access-control-allow-origin", origin)
