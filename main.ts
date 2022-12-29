@@ -38,6 +38,7 @@ async function reqHandler(req: Request) {
         headers: headers,
         body: req.body
     })
+    console.debug(`Performed request: ${RoProURL}`)
 
     // Return
     return response
