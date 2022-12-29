@@ -30,6 +30,9 @@ fn patch(path: PathBuf, _proxy: Option<String>) {
         if proxy.trim().len() == 0 {
             proxy = "ropro-proxy.deno.dev".to_string();
         }
+
+        // Trim
+        proxy = proxy.trim().to_string();
     }
 
     // The regex replace thing. We don't want to proxy everything, only the stuff that needs verification
