@@ -7,7 +7,8 @@ const DataFetchURL = "https://raw.githubusercontent.com/Stefanuk12/RoProPatcher/
 let Data = {
     "PHPSESSID": "",
     "ropro-id": "",
-    "ropro-verification": ""
+    "ropro-verification": "",
+    "tier": "pro_tier"
 }
 
 // See whenever we get an inbound request
@@ -15,6 +16,13 @@ async function reqHandler(req: Request) {
     // Replace host
     const RoProURL = new URL(req.url)
     RoProURL.host = "ropro.io"
+
+    // Check if the is the getSubscription one
+    if (RoProURL.pathname == "/getSubscription.php") {
+        return new Response(Data.tier, {
+            status: 200
+        })
+    }
 
     // Set the headers, only if they are not "blank". Assume if one is blank, the rest are.
     const headers = new Headers(req.headers)
@@ -25,14 +33,14 @@ async function reqHandler(req: Request) {
     }
 
     // Perform the request
-    const Response = await fetch(RoProURL, {
+    const response = await fetch(RoProURL, {
         method: req.method,
         headers: headers,
         body: req.body
     })
 
     // Return
-    return Response
+    return response
 }
 
 // Serve
