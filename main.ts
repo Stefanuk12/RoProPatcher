@@ -25,7 +25,8 @@ async function reqHandler(req: Request) {
     // CORS
     console.debug(`Incoming (${req.method.toUpperCase()}): ${RoProURL}`)
     const CORSheaders = new Headers()
-    CORSheaders.set("access-control-allow-origin", "*")
+    const origin = req.headers.get("origin") || "chrome-extension://adbacgifemdbhdkfppmeilbgppmhaobf"
+    CORSheaders.set("access-control-allow-origin", origin)
     CORSheaders.set("access-control-allow-headers", "*")
     CORSheaders.set("access-control-allow-credentials", "true")
     if (req.method.toUpperCase() == "OPTIONS") {
@@ -61,7 +62,7 @@ async function reqHandler(req: Request) {
 
     // Add CORS to headers
     const responseHeaders = new Headers(response.headers)
-    responseHeaders.set("access-control-allow-origin", "*")
+    responseHeaders.set("access-control-allow-origin", origin)
     responseHeaders.set("access-control-allow-headers", "*")
     responseHeaders.set("access-control-allow-credentials", "true")
 
