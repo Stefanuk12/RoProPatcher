@@ -38,9 +38,9 @@ fn patch(path: PathBuf, _proxy: Option<String>) {
 
     // Patching the background file
     let background = path.join("background.js");
-    let mut background_contents = fs::read_to_string(background.clone()).expect("Unable to open file (background.js)");
+    let mut background_contents = fs::read_to_string(&background).expect("Unable to open file (background.js)");
     background_contents = re.replace_all(&background_contents, &rep).to_string();
-    fs::write(background.clone(), background_contents).expect("Unable to write file contents (background.js)");
+    fs::write(&background, background_contents).expect("Unable to write file contents (background.js)");
 
     // Patching each file in js/page
     let jspage = path.clone().join("js/page");
