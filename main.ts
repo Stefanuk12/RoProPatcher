@@ -15,7 +15,7 @@ let Data = {
 async function reqHandler(req: Request) {
     // Replace host, checking the subdomain
     const RoProURL = new URL(req.url)
-    const FoundAPI = RoProURL.pathname.indexOf("!api")
+    const FoundAPI = RoProURL.pathname.indexOf("///api")
     if (FoundAPI != -1) {
         RoProURL.host = "api.ropro.io"
         RoProURL.pathname = RoProURL.pathname.substring(0, FoundAPI)
