@@ -22,6 +22,15 @@ async function reqHandler(req: Request) {
     } else
         RoProURL.host = "ropro.io"
 
+    // CORS
+    if (req.method.toUpperCase() == "OPTIONS") {
+        const headers = new Headers()
+        headers.set("access-control-allow-origin", "*")
+        return new Response(null, {
+            headers: headers
+        })
+    }
+
     // Check if the is the getSubscription one
     if (RoProURL.pathname == "/getSubscription.php") {
         return new Response(Data.tier, {
@@ -31,7 +40,6 @@ async function reqHandler(req: Request) {
 
     // Set the headers, only if they are not "blank". Assume if one is blank, the rest are.
     const headers = new Headers(req.headers)
-    headers.set("access-control-allow-origin", "*") // CORS
     if (Data.PHPSESSID != "") {
         headers.set("Cookie", `PHPSESSID=${Data.PHPSESSID}`)
         headers.set("ropro-id", Data["ropro-id"])
