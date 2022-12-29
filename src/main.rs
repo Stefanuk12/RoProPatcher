@@ -36,7 +36,7 @@ fn patch(path: PathBuf, _proxy: Option<String>) {
     }
 
     // The regex replace thing. We don't want to proxy everything, only the stuff that needs verification
-    let re = regex::Regex::new(r#"(https://api\.)ropro\.io/(validateUser\.php|getServerInfo\.php|getServerConnectionScore\.php|getServerAge\.php|getSubscription\.php\?key=)"#).unwrap();
+    let re = regex::Regex::new(r#"(https://api\.)ropro\.io/(validateUser\.php|getServerInfo\.php|getServerConnectionScore\.php|getServerAge\.php|getSubscription\.php)"#).unwrap();
     let rep = format!("https://{}/${{2}}///api", proxy);
 
     // Patching the background file
