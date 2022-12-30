@@ -21,7 +21,7 @@ async function reqHandler(req: Request) {
         RoProURL.host = "ropro.io"
 
     // Figure out stuff for cors
-    console.info(`Incoming (${req.method.toUpperCase()}): ${RoProURL}`)
+    // console.info(`Incoming (${req.method.toUpperCase()}): ${RoProURL}`)
     const CORSheaders = new Headers()
     const origin = req.headers.get("origin") || "chrome-extension://adbacgifemdbhdkfppmeilbgppmhaobf"
 
@@ -57,7 +57,6 @@ async function reqHandler(req: Request) {
     }
 
     // Perform the request
-    console.debug(headers)
     const response = await fetch(RoProURL, {
         method: req.method,
         headers: headers,
