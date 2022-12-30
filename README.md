@@ -1,7 +1,7 @@
 # RoPro Patcher
 This automatically patches the [RoPro](https://chrome.google.com/webstore/detail/ropro-enhance-your-roblox/adbacgifemdbhdkfppmeilbgppmhaobf?hl=en-GB) extension for you, allowing you to have `pro_tier` for free.
 
-[Tutorial](https://youtu.be/REDZssklqwY)
+[Tutorial](https://www.youtube.com/watch?v=Do1X2COTq_8)
 
 ## NOTE
 Chrome, Brave (and possibly other browsers) have a feature that checks the hash of the extension. This means that it will flag as corrupted. Therefore, you will have to download the extension, patch it with a custom path and use developer mode to load an unpacked extension.
