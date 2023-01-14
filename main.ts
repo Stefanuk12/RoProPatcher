@@ -81,12 +81,26 @@ async function reqHandler(req: Request) {
 // Serve
 serve(reqHandler, {port: 443});
 
-// Refresh the data every 5 minutes
+// Alerts RoPro to keep the session up
+async function AlertRoPro() {
+    await fetch(`https://api.ropro.io/handleRoProAlert.php?timestamp=${Math.round(Date.now() / 1000)}`, {
+        headers: {
+            Cookie: `PHPSESSID=${Data.PHPSESSID}`
+        }
+    }).catch((e) => {
+        console.error("Unable to alert RoPro")
+    })
+}
+
+// Refresh the data every 5 minutes and alert RoPro
 (async () => {
     while (true) {
         // Grab the data, and set.
         Data = await (await fetch(DataFetchURL)).json()
         console.info("Refreshed data", Data)
+
+        // Alert RoPro
+        await AlertRoPro()
 
         // Wait some time
         await sleep(300)
