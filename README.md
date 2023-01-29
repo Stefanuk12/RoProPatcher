@@ -4,6 +4,11 @@ This automatically patches the [RoPro](https://chrome.google.com/webstore/detail
 [Tutorial](https://www.youtube.com/watch?v=Do1X2COTq_8)
 
 ## NOTE
+
+### Subscription expired
+My RoPro subscription has expired as of 29/01/2023. This means that the servers will appear as "Unknown Region". If you have a subscription and would like to help everyone else out, please message me on Discord or create an issue so we can talk further.
+
+### Compatibility warning
 Chrome, Brave (and possibly other browsers) have a feature that checks the hash of the extension. This means that it will flag as corrupted. Therefore, you will have to download the extension, patch it with a custom path and use developer mode to load an unpacked extension.
 
 - an exception to this rule is Opera GX
@@ -33,7 +38,7 @@ This currently does not support Firefox but it easily can be done manually. To d
 You can view a fully manual YouTube tutorial [here](https://youtu.be/GHPSL0IMeww)
 
 # Getting RoPro Verification Token
-You may use the patcher to get this token, however, you might find it easier to do it another way:
+This will detail how to get your verification token which 99% of you will find no use for. This token is used for tracking playtime for a specific user. By using this token, you are able to track playtime for your main account while on your alt account.
 - Go to your extensions in your browser, e.g. `chrome://extensions`
 - You should see something like `Inspect views  background page` under RoPro
 - Press on the underlined __background page__
