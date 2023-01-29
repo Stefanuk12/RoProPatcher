@@ -1,8 +1,12 @@
 # RoPro Patcher - Proxy
 This is the source for the proxy linked to the patcher. This proxy adds the correct cookie and "ropro" headers to your request and then directly sends back the response. In turn, it tricks the extension into thinking you have the highest tier and also makes the server filters work.
 
-## Bugs
-Not sure if this can be fixed but your cookies aren't sent so it can cause issues with playtime tracking, etc. Trying to see about a fix...
+## Grabbing your own PHPSESSID
+- Open the extension's developer console by heading to the extension page for your browser and pressing on the underlined link beside "Inspect views"
+- Open the Network tab
+- View the servers of a Roblox game
+- Press on any request to the RoPro servers (in the Network tab of the developer console)
+- Under Headers > Request Headers > cookie, you should find `PHPSESSID=...`. The `...` is your PHPSESSID
 
 ## How to deploy
 If you don't trust my own proxy, you can follow these steps:
