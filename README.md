@@ -1,7 +1,7 @@
 # RoPro Patcher - Proxy (GO LANG)
 This is the source for the proxy linked to the patcher. This proxy adds the correct cookie and "ropro" headers to your request and then directly sends back the response. In turn, it tricks the extension into thinking you have the highest tier and also makes the server filters work.
 
-This version was created by @MaxTCodes and therefore maintained by them. **I will not be updating this myself if anything updates, except possibly the PHPSESSID**.
+This version was created by @MaxTCodes and therefore maintained by them. **I will not be updating this myself if anything updates**.
 
 ## This is being hosted for you!
 Darkhub Developers have donated some of their server power, to host a version of this proxy for us! It is completly unlimited, and all the code is here! The url is [ropro.darkhub.cloud](//ropro.darkhub.cloud)! 
