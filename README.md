@@ -7,8 +7,13 @@ This automatically patches the [RoPro](https://chrome.google.com/webstore/detail
 
 ## NOTE
 
+### Quota Exceeded
+As of 16th June 2023, I have reached my request quota. You must either use your own proxy or use darkhub's proxy which can be found [here](https://github.com/Stefanuk12/RoProPatcher/tree/go-lang).
+
 ### Subscription expired
 My RoPro subscription has expired as of 29/01/2023. This means that the servers will appear as "Unknown Region". If you have a subscription and would like to help everyone else out, please message me on Discord or create an issue so we can talk further.
+
+Somehow, the subscription has been expired for a while but still works. Perhaps constantly keeping the token alive meant that I have unlimited subscription.
 
 ### Compatibility warning
 Chrome, Brave (and possibly other browsers) have a feature that checks the hash of the extension. This means that it will flag as corrupted. Therefore, you will have to download the extension, patch it with a custom path and use developer mode to load an unpacked extension.
