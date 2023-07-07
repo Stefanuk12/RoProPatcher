@@ -22,7 +22,7 @@ fn patch(path: PathBuf, _proxy: Option<String>) -> String {
     if proxy == "N/A" {
         // Ask for the proxy domain, default it to ours
         proxy = String::new();
-        print!("Please enter the proxy domain (either a number or a custom input):\n1. ropro-proxy.deno.dev (default)\n2. ropro.darkhub.cloud\n> ");
+        print!("Please enter the proxy domain (either a number or a custom input):\n1. ropro-proxy.deno.dev (default)\n2. ropro.darkhub.cloud\n3. ropro.synapse.rocks\n> ");
         stdout().flush().unwrap();
         stdin().read_line(&mut proxy).ok().expect("Failed to get user input");
 
@@ -31,6 +31,7 @@ fn patch(path: PathBuf, _proxy: Option<String>) -> String {
             "" => "ropro-proxy.deno.dev".to_owned(),
             "1" => "ropro-proxy.deno.dev".to_owned(),
             "2" => "ropro.darkhub.cloud".to_owned(),
+            "3" => "ropro.synapse.rocks".to_owned(),
             _ => proxy
         };
 
