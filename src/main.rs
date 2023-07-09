@@ -1,43 +1,27 @@
 // Dependencies
-use std::{fs, io::{stdin, stdout, Write, Read}, path::PathBuf};
+use terminal_menu::{run, menu, label, scroll, string, submenu, back_button, button, mut_menu, list};
+use std::{path::PathBuf, fs::{self, File}, io::{Cursor, Write}};
 use platform_dirs::AppDirs;
+use crx_dl::{ChromeCRXQuery, crx_to_zip};
 
-/// Pauses the application until the user presses enter.
-fn pause() {
-    let mut stdin = stdin();
-    let mut stdout = stdout();
+// Constants
+const PROXIES_URL: &str = "https://raw.githubusercontent.com/Stefanuk12/RoProPatcher/master/proxies.txt";
 
-    // We want the cursor to stay at the end of the line, so we print without a newline and flush manually.
-    write!(stdout, "Press any key to continue...").unwrap();
-    stdout.flush().unwrap();
-
-    // Read a single byte and discard
-    let _ = stdin.read(&mut [0u8]).unwrap();
+/// Fetches each proxy.
+fn get_proxies() -> Vec<String> {
+    reqwest::blocking::Client::new()
+        .get(PROXIES_URL)
+        .send()
+        .expect("unable to grab proxies")
+        .text()
+        .expect("invalid proxies")
+        .lines()
+        .map(|x| x.to_string())
+        .collect()
 }
 
 /// Performs the entire patching process.
-fn patch(path: PathBuf, _proxy: Option<String>) -> String {
-    // Ask for the proxy url
-    let mut proxy = _proxy.unwrap_or("N/A".to_owned());
-    if proxy == "N/A" {
-        // Ask for the proxy domain, default it to ours
-        proxy = String::new();
-        print!("Please enter the proxy domain (either a number or a custom input):\n1. ropro-proxy.deno.dev (default)\n2. ropro.darkhub.cloud\n> ");
-        stdout().flush().unwrap();
-        stdin().read_line(&mut proxy).ok().expect("Failed to get user input");
-
-        // Set
-        proxy = match proxy.trim() {
-            "" => "ropro-proxy.deno.dev".to_owned(),
-            "1" => "ropro-proxy.deno.dev".to_owned(),
-            "2" => "ropro.darkhub.cloud".to_owned(),
-            _ => proxy
-        };
-
-        // Trim
-        proxy = proxy.trim().to_string();
-    }
-
+fn patch(path: PathBuf, proxy: String) {
     // The regex replace thing. We don't want to proxy everything, only the stuff that needs verification
     let re = regex::Regex::new(r#"(https://api\.)ropro\.io/(validateUser\.php|getServerInfo\.php|getServerConnectionScore\.php|getServerAge\.php|getSubscription\.php)"#).unwrap();
     let rep = format!("https://{}/${{2}}///api", proxy);
@@ -54,7 +38,7 @@ fn patch(path: PathBuf, _proxy: Option<String>) -> String {
     }
 
     // Patching each file in js/page
-    let jspage = path.clone().join("js/page");
+    let jspage = path.join("js/page");
     for dir_entry in fs::read_dir(jspage).unwrap() {
         // Get the file path
         let file = dir_entry.unwrap();
@@ -62,45 +46,128 @@ fn patch(path: PathBuf, _proxy: Option<String>) -> String {
         let file_path = file.path();
     
         // Patch the file
-        let file_data = fs::read_to_string(file_path.clone()).expect(&format!("Unable to open file ({})", file_name));
+        let file_data = fs::read_to_string(file_path.clone()).unwrap_or_else(|_| panic!("Unable to open file ({})", file_name));
         let new_file_data = re.replace_all(&file_data, &rep).to_string();
-        fs::write(file_path.clone(), new_file_data.clone()).expect(&format!("Unable to write file contents ({})", file_name));
+        fs::write(file_path.clone(), new_file_data.clone()).unwrap_or_else(|_| panic!("Unable to write file contents ({})", file_name));
     }
-
-    // Done
-    proxy
 }
 
-/// Entrypoint
-fn main() {
-    // Grab the input directory
-    let mut input_dir = String::new();
-    print!("Thanks for using Stefanuk12's RoPro Patcher.\n\nPlease select an option:\n1. Opera GX\n2. Custom Path\n> ");
-    stdout().flush().unwrap();
-    stdin().read_line(&mut input_dir).ok().expect("Failed to get user input");
+/// Downloads RoPro source.
+fn download_extension() -> Vec<u8> {
+    // Download the extension
+    let mut crx_query = ChromeCRXQuery::default();
+    crx_query.x = "adbacgifemdbhdkfppmeilbgppmhaobf";
+    let extension_crx = crx_query.download_blocking().unwrap();
 
-    // Grab the path we want to use
-    let path: PathBuf;
-    match input_dir.trim() {
-        // Opera GX
-        "1" => {
-            // Grab path
-            path = fs::read_dir(AppDirs::new(Some(r"Opera Software\Opera GX Stable\Extensions\adbacgifemdbhdkfppmeilbgppmhaobf"), false).unwrap().config_dir).expect("Unable to grab Opera GX extension.").next().unwrap().unwrap().path();
-        }
-        // Custom Path
-        "2" => {
-            input_dir.clear();
-            print!("Please enter the path: ");
-            stdout().flush().unwrap();
-            stdin().read_line(&mut input_dir).ok().expect("Failed to get user input");
-            path = PathBuf::from(input_dir.trim().to_string());
-        }
-        // Neither of above
-        _ => panic!("Invalid option")
+    // Convert it to .zip
+    let crx_zip = crx_to_zip(extension_crx, None).unwrap();
+
+    // Done
+    crx_zip
+}
+
+/// Downloads RoPro source, then output to file as `.zip`.
+fn download_extract() {
+    // Download the extension's source
+    let extension_source = download_extension();
+
+    // Output to file
+    let mut file_out = File::create(format!("{}.zip", "RoPro")).unwrap();
+    file_out.write_all(&extension_source).unwrap();
+
+    // Output
+    println!("Downloaded RoPro.");
+}
+
+/// Downloads RoPro source and patches automatically.
+fn download_patch(selected_proxy: String) {
+    // Download the extension's source
+    let extension_source = download_extension();
+
+    // Extract the extension
+    let extract_dir = PathBuf::from("RoPro");
+    zip_extract::extract(Cursor::new(extension_source), &extract_dir, true).unwrap();
+
+    // Patch
+    patch(extract_dir, selected_proxy.to_string());
+    println!("Finished patching.");
+}
+
+/// Entrypoint.
+fn main() {
+    // Grab all proxies
+    let proxies = get_proxies();
+
+    // Grab vars, checking if using automated process
+    let args: Vec<String> = std::env::args().collect();
+    if args.len() == 2 {
+        // Figure out which proxy we are using
+        let arg = args.get(1).unwrap();
+        let selected_proxy = if arg.chars().next().unwrap().is_numeric() {
+            proxies
+                .get(arg.parse::<usize>().unwrap())
+                .expect("unable to get proxy index")
+        } else {
+            arg
+        };
+
+        // Download and patch
+        download_patch(selected_proxy.to_string());
+
+        // Done
+        return
     }
 
-    // Patching...
-    let proxy = patch(path.clone(), None);
-    println!("Patched with the following configuration:\n-> Path: {}\n-> Proxy: {}", path.display(), proxy);
-    pause();
+    // Construct the menu and run it
+    let menu = menu(vec![
+        label("-------------------------"),
+        label("-     RoPro Patcher     -"),
+        label("- Created by Stefanuk12 -"),
+        label("-------------------------"),
+        submenu("Custom Patch", vec![
+            label      ("-----------------------------------"),
+            label      ("-     RoPro Patcher - Patcher     -"),
+            label      ("-      Created by Stefanuk12      -"),
+            label      ("-----------------------------------"),
+            scroll     ("Select a proxy", proxies.clone()),
+            string     ("Custom proxy (overwrites)", "", true),
+            label      ("--------------"),
+            string     ("RoPro Path", "./", false),
+            list       ("Use Opera GX Path", vec!["No", "Yes"]),
+            label      ("--------------"),
+            button     ("Start"),
+            back_button("Back")
+        ]),
+        button("Download RoPro source as .zip"),
+        button("Download and Patch (uses default proxy)"),
+        back_button("Exit")
+    ]);
+    run(&menu);
+
+    // User has exited, process their action
+    let mut mm = mut_menu(&menu);
+    let selected_item = mm.selected_item_name();
+    match selected_item {
+        "Exit" => return println!("Goodbye!"),
+        "Download RoPro source as .zip" => download_extract(),
+        "Download and Patch (uses default proxy)" => download_patch(proxies.get(1).unwrap().to_string()),
+        "Patch" => {
+            // Grab their selected proxy
+            let patch_menu = mm.get_submenu("Patch");
+            let custom_proxy = patch_menu.selection_value("Custom proxy (overwrites)");
+            let selected_proxy = if custom_proxy.is_empty() { patch_menu.selection_value("Select a proxy") } else { custom_proxy }; 
+            
+            // Grab their selected path
+            let selected_path = if patch_menu.selection_value("Use Opera GX Path") == "Yes" {
+                AppDirs::new(Some(r"Opera Software\Opera GX Stable\Extensions\adbacgifemdbhdkfppmeilbgppmhaobf"), false).unwrap().config_dir
+            } else {
+                PathBuf::from(patch_menu.selection_value("RoPro Path"))
+            };
+
+            // Patch
+            patch(selected_path, selected_proxy.to_string());
+            println!("Finished patching.");
+        }
+        _ => return println!("You should not be seeing this...")
+    };
 }
