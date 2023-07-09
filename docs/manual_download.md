@@ -11,4 +11,4 @@
 Now, view [this](installing.md) for installing the patched extension.
 
 ## Video tutorial
-You can view a fully manual YouTube tutorial [here](https://youtu.be/GHPSL0IMeww)
+You can view a **fully** manual YouTube tutorial [here](https://youtu.be/GHPSL0IMeww).

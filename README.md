@@ -6,7 +6,8 @@ This automatically patches the [RoPro](https://chrome.google.com/webstore/detail
 ## Links
 
 1. [Video tutorial (v1.1.4 and below)](https://www.youtube.com/watch?v=Do1X2COTq_8)
-2. [V3rmillion thread](https://v3rmillion.net/showthread.php?tid=1197674)
+2. [Video tutorial (v2.0.0 and above)](https://www.youtube.com/watch?v=st_uw4DFlOo)
+3. [V3rmillion thread](https://v3rmillion.net/showthread.php?tid=1197674)
 
 ## NOTE
 
