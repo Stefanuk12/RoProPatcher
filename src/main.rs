@@ -151,15 +151,22 @@ fn main() {
         "Exit" => return println!("Goodbye!"),
         "Download RoPro source as .zip" => download_extract(),
         "Download and Patch (uses default proxy)" => download_patch(proxies.get(1).unwrap().to_string()),
-        "Patch" => {
+        "Custom Patch" => {
             // Grab their selected proxy
-            let patch_menu = mm.get_submenu("Patch");
+            let patch_menu = mm.get_submenu("Custom Patch");
             let custom_proxy = patch_menu.selection_value("Custom proxy (overwrites)");
             let selected_proxy = if custom_proxy.is_empty() { patch_menu.selection_value("Select a proxy") } else { custom_proxy }; 
             
             // Grab their selected path
             let selected_path = if patch_menu.selection_value("Use Opera GX Path") == "Yes" {
-                AppDirs::new(Some(r"Opera Software\Opera GX Stable\Extensions\adbacgifemdbhdkfppmeilbgppmhaobf"), false).unwrap().config_dir
+                let ext_path = AppDirs::new(Some(r"Opera Software\Opera GX Stable\Extensions\adbacgifemdbhdkfppmeilbgppmhaobf"), false).unwrap().config_dir;
+                fs::read_dir(ext_path)
+                    .expect("extension not installed?")
+                    .flatten()
+                    .filter(|x| x.metadata().unwrap().is_dir())
+                    .max_by_key(|x| x.metadata().unwrap().modified().unwrap())
+                    .unwrap()
+                    .path()
             } else {
                 PathBuf::from(patch_menu.selection_value("RoPro Path"))
             };
