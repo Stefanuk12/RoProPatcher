@@ -12,3 +12,5 @@ reqwest = { version = "0.11.18", features = ["blocking"] }
 terminal-menu = "2.0.5"
 crx-dl = { git = "https://github.com/Stefanuk12/crx-dl.git" }
 zip-extract = "0.1.2"
+zip = "0.6"
+zip-extensions = "0.6.1"

@@ -1,5 +1,6 @@
 // Dependencies
 use terminal_menu::{run, menu, label, scroll, string, submenu, back_button, button, mut_menu, list};
+use zip_extensions::zip_create_from_directory;
 use std::{path::PathBuf, fs::{self, File}, io::{Cursor, Write}};
 use platform_dirs::AppDirs;
 use crx_dl::{ChromeCRXQuery, crx_to_zip};
@@ -113,6 +114,15 @@ fn main() {
 
         // Download and patch
         download_patch(selected_proxy.to_string());
+
+        // Zip up
+        let source_dir = PathBuf::from("RoPro");
+        zip_create_from_directory(&PathBuf::from("RoPro-PATCHED.zip"), &source_dir)
+            .expect("unable to create zip");
+
+        // Delete directory
+        fs::remove_dir_all(source_dir)
+            .expect("unable to remove RoPro folder");
 
         // Done
         return
