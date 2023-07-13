@@ -10,6 +10,8 @@ There is another proxy hosted by darkhub: `ropro.darkhub.cloud`. You may opt for
 - Press on any request to the RoPro servers (in the Network tab of the developer console)
 - Under Headers > Request Headers > cookie, you should find `PHPSESSID=...`. The `...` is your PHPSESSID
 
+You know it's right if it's exactly 32 characters long.
+
 ## How to deploy
 If you don't trust my own proxy, you can follow these steps:
 - Fork this repo
