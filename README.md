@@ -1,6 +1,8 @@
 # RoPro Patcher
 This automatically patches the [RoPro](https://chrome.google.com/webstore/detail/ropro-enhance-your-roblox/adbacgifemdbhdkfppmeilbgppmhaobf?hl=en-GB) extension for you, allowing you to have `pro_tier` for free.
 
+This is **not** a stealer of any sort. You can view all of the code on here and see that it is safe. If you have any issues / features not working, please look at the [note](#note)
+
 ![Preview of the user interface](preview.png)
 
 ## Links
@@ -11,7 +13,7 @@ This automatically patches the [RoPro](https://chrome.google.com/webstore/detail
 
 ## NOTE
 
-Please visit the current open issues [here](https://github.com/Stefanuk12/RoProPatcher/issues) for any updates.
+If you have any issues / feautres not working, please visit the current open issues [here](https://github.com/Stefanuk12/RoProPatcher/issues).
 
 ## Documentation
 

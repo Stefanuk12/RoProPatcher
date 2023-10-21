@@ -1,6 +1,9 @@
 # Getting RoPro Verification Token
 
-This will detail how to get your verification token which 99% of you will find no use for. This token is used for tracking playtime for a specific user. By using this token, you are able to track playtime for your main account while on your alt account.
+This will detail how to get your verification token, but before you read the steps, read [this](#please-read).
+
+- This token is used for tracking playtime for a specific user
+- By using this token, you are able to track playtime for your main account while on your alt account
 
 ## Steps
 
@@ -10,3 +13,7 @@ This will detail how to get your verification token which 99% of you will find n
 - The developer console for the extensions should open, go to the console tab
 - Execute this `await getStorage("userVerification")`
 - The format will be `{USERID: 'TOKEN'}`
+
+## Please Read
+
+This is not applicable to most of you. If you are having trouble with verifying your account via RoPro, this is an issue with RoPro, not the patcher. Keep trying, it will work eventually. This is only for developers.

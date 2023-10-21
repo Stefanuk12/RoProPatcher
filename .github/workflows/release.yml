@@ -29,5 +29,4 @@ jobs:
           TOOLCHAIN_VERSION: stable
           RUSTTARGET: ${{ matrix.target }}
           ARCHIVE_TYPES: ${{ matrix.archive }}
-          POST_BUILD: "post_build.sh"
           EXTRA_FILES: "RoPro-PATCHED.zip"
